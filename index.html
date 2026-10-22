@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>【防犯教育】教員向け個人情報漏洩対策ポータル装用・ゼロクリック詐欺＆解約トラップ体験学習</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        edu: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        },
+                        scam: {
+                            bg: '#120000',
+                            panel: '#280303',
+                            accent: '#ff0033',
+                            border: '#cc0000'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'Hiragino Kaku Gothic ProN', 'Meiryo', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Pulse Animation for Danger Visuals */
+        @keyframes pulse-danger {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.02); opacity: 0.9; }
+        }
+        .animate-pulse-danger {
+            animation: pulse-danger 0.8s infinite;
+        }
+
+        /* Screen Shake Animation on Scam Trigger */
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+        .shake-effect {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        /* Scam Alert Red Flash Background */
+        @keyframes alert-flash {
+            0%, 100% { background-color: rgba(255, 0, 51, 0.08); }
+            50% { background-color: rgba(255, 0, 51, 0.32); }
+        }
+        .scam-flash-bg {
+            animation: alert-flash 1.1s infinite;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-sans min-h-screen flex flex-col pb-14 transition-colors duration-200">
+
+    <!-- Navigation Header -->
+    <nav class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 shadow-sm sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-16 items-center">
+            <!-- Site Brand -->
+            <div class="flex items-center gap-3">
+                <div class="bg-edu-700 text-white p-2.5 rounded-xl shadow-sm">
+                    <i class="fa-solid fa-graduation-cap text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-base md:text-lg text-slate-900 dark:text-white leading-tight">全日本教員ICT研修・情報セキュリティポータル</h1>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400">学校関係者・教職員のための情報セキュリティ＆個人情報保護情報サイト</p>
+                </div>
+            </div>
+
+            <!-- Switch Mode Navigation Tabs -->
+            <div class="flex bg-slate-100 dark:bg-slate-700 p-1 rounded-xl">
+                <button id="tab-btn-sim" onclick="switchTab('sim')" class="px-3.5 py-1.5 rounded-lg text-xs md:text-sm font-bold transition-all duration-150 flex items-center gap-2 bg-white dark:bg-slate-800 text-edu-700 dark:text-sky-400 shadow-sm">
+                    <i class="fa-solid fa-display"></i>
+                    <span>体験モード</span>
+                </button>
+                <button id="tab-btn-learn" onclick="switchTab('learn')" class="px-3.5 py-1.5 rounded-lg text-xs md:text-sm font-bold transition-all duration-150 flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white">
+                    <i class="fa-solid fa-shield-cat"></i>
+                    <span>防犯解説モード</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6">
+
+        <!-- ==================== MODE 1: SIMULATION MODE ==================== -->
+        <section id="mode-sim" class="block space-y-6">
+            
+            <!-- Reset Button Bar (Visible only after scam is triggered) -->
+            <div id="reset-bar" class="hidden flex justify-end">
+                <button id="btn-reset-sim" onclick="resetSimView()" class="text-xs bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 px-3 py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-rotate-left"></i> 最初のおとり画面に戻す
+                </button>
+            </div>
+
+            <!-- SIMULATION STAGE A: INNOCENT EDUCATIONAL PORTAL (DUMMY) -->
+            <div id="sim-portal" onclick="triggerScamOnInteraction()" class="bg-white dark:bg-slate-800 rounded-2xl shadow-md border border-slate-200 dark:border-slate-700 overflow-hidden transition-all cursor-pointer">
+                
+                <!-- Mock Browser Address Bar -->
+                <div class="bg-slate-100 dark:bg-slate-700/80 px-4 py-2 flex items-center gap-2 border-b border-slate-200 dark:border-slate-600 text-xs text-slate-600 dark:text-slate-300">
+                    <div class="flex gap-1.5">
+                        <div class="w-3 h-3 rounded-full bg-red-400"></div>
+                        <div class="w-3 h-3 rounded-full bg-amber-400"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-400"></div>
+                    </div>
+                    <div class="flex-grow bg-white dark:bg-slate-800 px-3 py-1 rounded border border-slate-200 dark:border-slate-600 text-center truncate font-mono text-slate-500 dark:text-slate-400 select-none flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-lock text-emerald-600 text-[10px]"></i>
+                        https://www.kyoin-security-portal.example.go.jp/privacy-protection/guidelines
+                    </div>
+                </div>
+
+                <!-- Educational Portal Content -->
+                <div class="p-6 md:p-10 space-y-8 select-none">
+                    
+                    <!-- Top Announcement Hero Card with PDF Download -->
+                    <div class="bg-gradient-to-r from-edu-800 to-edu-900 text-white rounded-2xl p-6 md:p-8 shadow-md flex flex-col md:flex-row items-center justify-between gap-6">
+                        <div class="space-y-3 max-w-2xl">
+                            <span class="inline-block bg-sky-400/20 text-sky-200 font-bold px-3 py-1 rounded-full text-xs border border-sky-300/30">
+                                文部科学省・教育機関セキュリティガイドライン準拠
+                            </span>
+                            <h3 class="text-2xl md:text-3xl font-black leading-snug">
+                                教員向け 個人情報漏洩対策について
+                            </h3>
+                            <p class="text-xs md:text-sm text-sky-100/90 leading-relaxed">
+                                児童生徒の個人データ管理、校内持ち出し端末のセキュリティルール、USBメモリ・クラウド利用時の情報漏洩リスク防止ガイドライン。
+                            </p>
+                        </div>
+                        <div class="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/20 text-center space-y-2 flex-shrink-0 w-full md:w-auto">
+                            <i class="fa-solid fa-file-pdf text-4xl text-red-400"></i>
+                            <div class="text-xs font-bold text-white">研修配布資料 (PDF 2.4MB)</div>
+                            <span class="inline-flex items-center gap-1 bg-red-600 hover:bg-red-700 text-white text-xs font-black px-4 py-2 rounded-lg shadow transition">
+                                <i class="fa-solid fa-download"></i> 資料ダウンロード: 個人情報漏洩対策ガイドライン.pdf
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Portal News Article Grid -->
+                    <div class="space-y-4">
+                        <h4 class="font-bold text-slate-900 dark:text-white text-base flex items-center gap-2 border-b border-slate-200 dark:border-slate-700 pb-2">
+                            <i class="fa-solid fa-newspaper text-edu-600"></i> 教育現場のセキュリティトピックス
+                        </h4>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                            <!-- Article 1 -->
+                            <div class="bg-slate-50 dark:bg-slate-700/40 p-4 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2 hover:border-edu-600 transition">
+                                <div class="flex justify-between items-center text-[11px] text-slate-400">
+                                    <span>2026.10.18</span>
+                                    <span class="bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 px-2 py-0.5 rounded font-bold">個人情報保護</span>
+                                </div>
+                                <h5 class="font-bold text-slate-800 dark:text-slate-200 text-sm leading-snug">
+                                    教員向け 個人情報漏洩対策について：校内データの安全管理と暗号化
+                                </h5>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">
+                                    成績データや家庭環境情報の外部流出を防ぐための基本ルールと暗号化ストレージの利用手順。
+                                </p>
+                            </div>
+
+                            <!-- Article 2 -->
+                            <div class="bg-slate-50 dark:bg-slate-700/40 p-4 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2 hover:border-edu-600 transition">
+                                <div class="flex justify-between items-center text-[11px] text-slate-400">
+                                    <span>2026.10.14</span>
+                                    <span class="bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300 px-2 py-0.5 rounded font-bold">フィッシング対策</span>
+                                </div>
+                                <h5 class="font-bold text-slate-800 dark:text-slate-200 text-sm leading-snug">
+                                    校内メールを狙う標的型攻撃メールの見分け方と初動対応
+                                </h5>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">
+                                    実在の教育委員会やシステム業者を装った偽メールの開封リスクと疑わしい場合の報告ルート。
+                                </p>
+                            </div>
+
+                            <!-- Article 3 -->
+                            <div class="bg-slate-50 dark:bg-slate-700/40 p-4 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2 hover:border-edu-600 transition">
+                                <div class="flex justify-between items-center text-[11px] text-slate-400">
+                                    <span>2026.10.09</span>
+                                    <span class="bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300 px-2 py-0.5 rounded font-bold">GIGA端末</span>
+                                </div>
+                                <h5 class="font-bold text-slate-800 dark:text-slate-200 text-sm leading-snug">
+                                    1人1台端末の家庭持ち帰り時におけるフィルタリングと個人情報流出防止
+                                </h5>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">
+                                    児童生徒が使用する学習端末のネットワークセキュリティ設定とアクセスログの確認手順。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Resource Category Links -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center text-xs">
+                        <div class="p-3 bg-slate-100 dark:bg-slate-700 rounded-xl font-bold text-slate-700 dark:text-slate-200 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-file-pdf text-red-500"></i> 個人情報保護規定.pdf
+                        </div>
+                        <div class="p-3 bg-slate-100 dark:bg-slate-700 rounded-xl font-bold text-slate-700 dark:text-slate-200 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-file-pdf text-red-500"></i> セキュリティ監査手引き.pdf
+                        </div>
+                        <div class="p-3 bg-slate-100 dark:bg-slate-700 rounded-xl font-bold text-slate-700 dark:text-slate-200 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-file-pdf text-red-500"></i> 研修用プレゼン資料.pdf
+                        </div>
+                        <div class="p-3 bg-slate-100 dark:bg-slate-700 rounded-xl font-bold text-slate-700 dark:text-slate-200 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-file-pdf text-red-500"></i> 緊急連絡窓口一覧.pdf
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- SIMULATION STAGE B: FAKE SCAM FRAUD WARNING SCREEN -->
+            <div id="sim-scam" class="hidden scam-flash-bg bg-scam-bg text-white rounded-2xl p-4 md:p-8 border-4 border-scam-border shadow-2xl space-y-6 relative overflow-hidden transition-all">
+                
+                <!-- Emergency Header -->
+                <div class="text-center space-y-3 border-b-2 border-scam-accent/50 pb-5">
+                    <div class="inline-flex items-center gap-2 bg-scam-accent text-white font-black px-4 py-1.5 rounded-full text-xs md:text-sm animate-pulse-danger tracking-wider shadow-lg">
+                        <i class="fa-solid fa-triangle-exclamation text-lg"></i>
+                        有料プレミアム教育情報サービス ご登録完了・契約成立
+                    </div>
+                    <h3 class="text-2xl md:text-4xl font-black text-red-500 tracking-tight leading-tight mt-2">
+                        会員入会手続きおよび端末ID登録が正常に完了いたしました
+                    </h3>
+                    <p class="text-xs md:text-sm text-slate-300 max-w-2xl mx-auto">
+                        「個人情報漏洩対策ガイドライン.pdf」のダウンロード操作に基づき、貴殿のIPアドレス・端末固有識別番号を登録いたしました。規定に基づき、以下の請求金額を速やかにお支払いください。
+                    </p>
+                </div>
+
+                <!-- Billing & Urgent Countdown Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Billing Box -->
+                    <div class="bg-scam-panel p-5 rounded-xl border border-scam-border/60 flex flex-col justify-between space-y-4">
+                        <div>
+                            <span class="text-xs text-slate-400 uppercase tracking-widest font-bold">ご請求金額 (年間特別ライセンス料)</span>
+                            <div class="text-3xl md:text-5xl font-black text-amber-400 tracking-tight my-2">
+                                ￥50,000
+                            </div>
+                            <p class="text-xs text-red-300 leading-normal">
+                                ※支払期日を超過した場合、プロバイダ開示請求費用および遅延損害金が自動加算されます。
+                            </p>
+                        </div>
+                        <div class="bg-black/70 p-3 rounded-lg text-xs space-y-1.5 border border-red-900/60 font-mono">
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">お支払い期日:</span>
+                                <span class="font-bold text-red-400" id="scam-deadline">本日 23:59まで</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">発行会員登録ID:</span>
+                                <span class="text-slate-200" id="scam-user-id">EDU-8839201</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Countdown Box -->
+                    <div class="bg-scam-panel p-5 rounded-xl border border-scam-border/60 flex flex-col justify-center items-center text-center space-y-3">
+                        <span class="text-xs text-slate-300 font-bold uppercase tracking-wider">誤登録・特別解約猶予 残り時間</span>
+                        <div class="text-4xl md:text-6xl font-mono font-black text-red-500 bg-black/90 px-6 py-3 rounded-xl border border-red-600/80 animate-pulse-danger shadow-inner" id="scam-timer">
+                            03:00
+                        </div>
+                        <p class="text-xs text-red-400 font-bold leading-relaxed">
+                            <i class="fa-solid fa-clock"></i> 時間内に解約申請またはお振込が確認できない場合、契約プロバイダへ支払催促通知を送信します。
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Exposed Technical Device Data Box -->
+                <div class="bg-black/90 p-4 md:p-6 rounded-xl border border-red-900/80 space-y-4 font-mono text-xs">
+                    <div class="flex items-center gap-2 text-red-400 font-bold border-b border-red-900/60 pb-2.5">
+                        <i class="fa-solid fa-user-secret text-base"></i>
+                        <span>【通信アクセスログ・個体識別データの取得完了】</span>
+                        <span class="text-[10px] bg-red-950 text-red-300 border border-red-800 px-2 py-0.5 rounded ml-auto font-sans">証拠暗号化保存済</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-slate-300">
+                        <div>
+                            <span class="text-slate-500 block text-[10px]">接続IPアドレス (模擬):</span>
+                            <span class="text-amber-300 font-bold text-sm" id="info-ip">203.0.113.195</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-500 block text-[10px]">推定アクセス言語 / タイムゾーン:</span>
+                            <span class="text-slate-200" id="info-lang">ja / Asia/Tokyo</span>
+                        </div>
+                        <div class="sm:col-span-2">
+                            <span class="text-slate-500 block text-[10px]">OS / ブラウザ識別データ (User-Agent):</span>
+                            <span class="text-slate-200 break-all" id="info-ua">解析中...</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-500 block text-[10px]">画面解像度・色深度:</span>
+                            <span class="text-slate-200" id="info-screen">解析中...</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-500 block text-[10px]">アクセス記録日時:</span>
+                            <span class="text-slate-200" id="info-time">解析中...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CANCELLATION BUTTON AND TRAP FORM -->
+                <div class="bg-scam-panel border-2 border-amber-500/80 rounded-xl p-5 space-y-4 shadow-xl">
+                    <div class="flex items-start gap-3 border-b border-amber-500/40 pb-3">
+                        <div class="p-2 bg-amber-500/20 text-amber-400 rounded-lg text-lg">
+                            <i class="fa-solid fa-arrow-rotate-left"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-black text-amber-400 text-base">※間違えてアクセスした方・解約をご希望の方はこちら</h4>
+                            <p class="text-xs text-slate-300 mt-0.5">誤って操作された方は、以下のフォームより解約申請を行ってください（解約手続きには本人確認のため個人情報の入力が必要です）。</p>
+                        </div>
+                    </div>
+
+                    <!-- FAKE CANCELLATION FORM (PERSONAL INFO HARVESTING TRAP) -->
+                    <form onsubmit="interceptCancellation(event)" class="space-y-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                            <div>
+                                <label class="block text-slate-300 font-bold mb-1">お名前（フルネーム） <span class="text-red-400">*必須</span></label>
+                                <input type="text" placeholder="例：山田 太郎" class="w-full bg-black/80 border border-slate-600 rounded-lg p-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-amber-400" required>
+                            </div>
+                            <div>
+                                <label class="block text-slate-300 font-bold mb-1">電話番号（携帯または固定） <span class="text-red-400">*必須</span></label>
+                                <input type="tel" placeholder="例：090-1234-5678" class="w-full bg-black/80 border border-slate-600 rounded-lg p-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-amber-400" required>
+                            </div>
+                            <div>
+                                <label class="block text-slate-300 font-bold mb-1">メールアドレス <span class="text-red-400">*必須</span></label>
+                                <input type="email" placeholder="例：example@domain.com" class="w-full bg-black/80 border border-slate-600 rounded-lg p-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-amber-400" required>
+                            </div>
+                            <div>
+                                <label class="block text-slate-300 font-bold mb-1">生年月日 <span class="text-red-400">*必須</span></label>
+                                <input type="date" class="w-full bg-black/80 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-amber-400" required>
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="block text-slate-300 font-bold mb-1">ご住所 <span class="text-red-400">*必須</span></label>
+                                <input type="text" placeholder="例：東京都千代田区..." class="w-full bg-black/80 border border-slate-600 rounded-lg p-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-amber-400" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-black py-3 px-4 rounded-xl shadow-lg transition text-xs md:text-sm flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-paper-plane"></i>
+                            <span>上記に入力して送信（解約申請をする）※デモ動作</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Navigation to Safe Learning Section -->
+                <div class="pt-2">
+                    <button onclick="switchTab('learn')" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black py-4 px-6 rounded-xl shadow-2xl transition text-sm md:text-base flex items-center justify-center gap-2 transform hover:-translate-y-0.5">
+                        <i class="fa-solid fa-shield-cat text-xl"></i>
+                        <span>安全な解説モードへ（なぜ解約フォームに入力してはいけないのか？）</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Footer Sim Notice -->
+            <div id="sim-footer-note" class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 text-xs text-slate-500 dark:text-slate-400 flex flex-col md:flex-row justify-between items-center gap-2">
+                <span><i class="fa-solid fa-circle-question text-edu-600"></i> 一方的な「登録完了画面」の表示で成立する契約は法律上存在しません。</span>
+                <button onclick="switchTab('learn')" class="text-edu-600 dark:text-sky-400 hover:underline font-bold whitespace-nowrap">
+                    解説・防犯ガイドを読む &rarr;
+                </button>
+            </div>
+        </section>
+
+
+        <!-- ==================== MODE 2: EDUCATIONAL EXPLANATION MODE ==================== -->
+        <section id="mode-learn" class="hidden space-y-8">
+            
+            <!-- Hero Banner -->
+            <div class="bg-gradient-to-r from-edu-800 to-edu-900 text-white p-6 md:p-8 rounded-2xl shadow-xl space-y-3">
+                <div class="inline-flex items-center gap-2 bg-edu-600/40 text-sky-200 text-xs px-3 py-1 rounded-full border border-sky-400/30 font-bold">
+                    <i class="fa-solid fa-scale-balanced"></i> セキュリティ＆防犯学習ガイド
+                </div>
+                <h2 class="text-2xl md:text-3xl font-extrabold">「解約手続きフォーム」の手口とカラクリ完全解説</h2>
+                <p class="text-slate-200 text-xs md:text-sm max-w-3xl leading-relaxed">
+                    ワンクリック詐欺・ゼロクリック詐欺サイトの最大の罠は「解約・キャンセルフォーム」です。焦って入力してしまう心理を悪用した個人情報採取の手口を学びましょう。
+                </p>
+            </div>
+
+            <!-- Focus Feature: The Trap of Cancellation Form -->
+            <div class="bg-amber-50 dark:bg-amber-950/40 border-2 border-amber-400 dark:border-amber-700 p-6 rounded-2xl space-y-4">
+                <div class="flex items-center gap-3 text-amber-900 dark:text-amber-200 font-extrabold text-base md:text-lg">
+                    <div class="bg-amber-500 text-slate-950 p-2 rounded-xl text-xl">
+                        <i class="fa-solid fa-user-ninja"></i>
+                    </div>
+                    <h3>【重要】なぜ詐欺サイトは「解約フォーム」を用意するのか？</h3>
+                </div>
+                
+                <p class="text-xs md:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+                    画面に表示されているIPアドレスや端末情報は、あなたの名前や電話番号、住所ではありません。**サイトを開いたりPDFダウンロードリンクを押した時点では、詐欺師はあなたが誰なのか全く知りません。**
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                    <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-amber-200 dark:border-amber-900 space-y-2">
+                        <span class="bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300 font-bold px-2.5 py-0.5 rounded">誤った行動 (詐欺師の罠)</span>
+                        <p class="text-slate-700 dark:text-slate-300">
+                            「解約したい」一心で氏名や電話番号、メールアドレスをフォームに入力して送信してしまう。
+                        </p>
+                        <div class="text-red-600 dark:text-red-400 font-bold">
+                            &rarr; 自ら本物の個人情報を相手に差し出すことになり、直接の脅迫・催促電話が届くようになります。
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-emerald-200 dark:border-emerald-900 space-y-2">
+                        <span class="bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300 font-bold px-2.5 py-0.5 rounded">正しい行動 (完全無視)</span>
+                        <p class="text-slate-700 dark:text-slate-300">
+                            解約フォームには一切入力せず、そのままブラウザのタブを閉じる。
+                        </p>
+                        <div class="text-emerald-600 dark:text-emerald-400 font-bold">
+                            &rarr; 相手はあなたの名前も電話番号も知らないため、追跡や催促をすることは不可能です。
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Technical & Legal Explanation Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                <!-- CARD 1: Legal Invalidity -->
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4 flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <div class="w-10 h-10 rounded-xl bg-sky-100 dark:bg-sky-900/50 text-edu-600 dark:text-sky-400 flex items-center justify-center font-bold text-lg">
+                            <i class="fa-solid fa-gavel"></i>
+                        </div>
+                        <h3 class="font-bold text-base md:text-lg text-slate-900 dark:text-white">1. 法的根拠：契約は完全不成立</h3>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                            電子消費者契約法および民法第95条（錯誤）に基づき、申込確認画面のない一方的な画面切り替えや登録表示は法的効力が一切ありません。「解約手続き」を行う必要自体が存在しません。
+                        </p>
+                    </div>
+                    <div class="pt-2 text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                        <i class="fa-solid fa-circle-check"></i> 支払う義務は100%ありません
+                    </div>
+                </div>
+
+                <!-- CARD 2: Technical Explanation -->
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4 flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-lg">
+                            <i class="fa-solid fa-code"></i>
+                        </div>
+                        <h3 class="font-bold text-base md:text-lg text-slate-900 dark:text-white">2. 技術的種明かし：端末情報≠個人情報</h3>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                            画面に表示されるIPアドレスやOS・ブラウザの種類（User-Agent）は、Webサイトを閲覧する際にシステム上自動送信される一般的なデータです。これらで氏名・住所・電話番号等の個人が特定されることは不可能です。
+                        </p>
+                    </div>
+                    <div class="pt-2 text-xs font-bold text-edu-600 dark:text-sky-400 flex items-center gap-1">
+                        <i class="fa-solid fa-shield"></i> 個人情報は一切特定されていません
+                    </div>
+                </div>
+
+                <!-- CARD 3: Actionable Steps -->
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4 flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <div class="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-900/50 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold text-lg">
+                            <i class="fa-solid fa-hand"></i>
+                        </div>
+                        <h3 class="font-bold text-base md:text-lg text-slate-900 dark:text-white">3. 正しい対処法：鉄則の原則</h3>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                            ① <strong>絶対に入力しない</strong>（解約フォーム無視）<br>
+                            ② <strong>絶対に連絡しない</strong>（電話・メール禁止）<br>
+                            ③ <strong>そのまま画面を閉じる</strong>（タブを終了）
+                        </p>
+                    </div>
+                    <div class="pt-2 text-xs font-bold text-amber-600 dark:text-amber-400 flex items-center gap-1">
+                        <i class="fa-solid fa-ban"></i> 「無視して閉じる」が唯一の正解
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- PUBLIC CONSULTATION CONTACTS -->
+            <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
+                <h3 class="font-bold text-lg text-slate-900 dark:text-white flex items-center gap-2">
+                    <i class="fa-solid fa-headset text-edu-600"></i>
+                    公的機関の相談電話窓口（不安な場合の連絡先）
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 flex items-center gap-4">
+                        <div class="bg-amber-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl flex-shrink-0 font-black shadow-sm">
+                            188
+                        </div>
+                        <div>
+                            <div class="font-bold text-slate-900 dark:text-white">消費者ホットライン</div>
+                            <div class="text-xs text-slate-500 dark:text-slate-400">最寄りの消費生活センターにつながります。</div>
+                            <div class="text-xs font-bold text-amber-600 dark:text-amber-400 mt-1">局番なし「188」（イヤヤ！）</div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 flex items-center gap-4">
+                        <div class="bg-blue-600 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl flex-shrink-0 font-black shadow-sm">
+                            #9110
+                        </div>
+                        <div>
+                            <div class="font-bold text-slate-900 dark:text-white">警察相談専用電話</div>
+                            <div class="text-xs text-slate-500 dark:text-slate-400">犯罪被害や悪質な脅迫行為に関する警察の相談窓口です。</div>
+                            <div class="text-xs font-bold text-blue-600 dark:text-blue-400 mt-1">全国共通「#9110」</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- EDUCATIONAL TRAP INTERCEPTOR MODAL -->
+    <div id="trap-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl max-w-lg w-full p-6 space-y-5 shadow-2xl border-4 border-amber-500 animate-pulse-danger">
+            <div class="flex items-center gap-3 text-red-600 dark:text-red-400 border-b border-slate-200 dark:border-slate-700 pb-3">
+                <i class="fa-solid fa-hand text-3xl"></i>
+                <div>
+                    <span class="text-xs font-black bg-red-600 text-white px-2 py-0.5 rounded">防犯警告デモ</span>
+                    <h4 class="font-black text-xl text-slate-900 dark:text-white">ちょっと待って！これが詐欺師の罠です！</h4>
+                </div>
+            </div>
+
+            <div class="space-y-3 text-xs md:text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
+                <p class="font-bold text-red-500 dark:text-red-400">
+                    焦って解約フォームに自分の名前や電話番号を入力して送信しようとしましたね！
+                </p>
+                <div class="bg-amber-50 dark:bg-amber-950/60 p-3.5 rounded-xl border border-amber-300 dark:border-amber-800 text-xs space-y-2">
+                    <div class="font-bold text-amber-900 dark:text-amber-200">【解説】詐欺師の真の狙い</div>
+                    <p class="text-slate-700 dark:text-slate-300">
+                        詐欺師はアクセスした段階では、あなたの名前や電話番号を<strong>全く知りません</strong>。
+                    </p>
+                    <p class="text-slate-700 dark:text-slate-300">
+                        「解約したい」と焦って自分から個人情報を入力して送信してしまうことで、<strong>初めて本当の個人情報が相手に渡ってしまいます</strong>。
+                    </p>
+                </div>
+            </div>
+
+            <div class="pt-2 flex flex-col sm:flex-row gap-2">
+                <button onclick="closeTrapModal()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-xs transition">
+                    デモ画面に戻る
+                </button>
+                <button onclick="closeTrapModal(); switchTab('learn')" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black py-3 rounded-xl text-xs transition">
+                    防犯解説モードを読む
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-100 dark:bg-slate-800/80 border-t border-slate-200 dark:border-slate-700 py-6 mt-12 text-center text-xs text-slate-500 dark:text-slate-400">
+        <div class="max-w-7xl mx-auto px-4 space-y-2">
+            <p>全日本教員ICT研修・情報セキュリティポータル - ワンクリック詐欺（ゼロクリック型）疑似体験・防犯教育コンテンツ</p>
+            <p class="text-[11px] text-slate-400 dark:text-slate-500">
+                ※本プログラムは情報セキュリティ教育および情報モラル研修目的のデモWebアプリです。個人情報の収集や金銭請求は行いません。
+            </p>
+        </div>
+    </footer>
+
+    <!-- FIXED BOTTOM SAFETY DEMO BAR (WHITE BACKGROUND) -->
+    <div id="safety-bar-bottom" class="fixed bottom-0 left-0 right-0 bg-white text-slate-900 border-t border-slate-200 shadow-lg px-4 py-2.5 z-50 flex flex-wrap justify-between items-center text-xs md:text-sm">
+        <div class="flex items-center gap-2">
+            <span class="bg-slate-900 text-white px-2.5 py-0.5 rounded text-xs font-black uppercase tracking-wider">防犯教育デモ</span>
+            <i class="fa-solid fa-shield-halved text-base text-slate-900"></i>
+            <span class="font-bold text-slate-800">※これは教育用デモ画面です（実際の請求・契約は一切発生していません）</span>
+        </div>
+        <div class="flex items-center gap-2 mt-1 sm:mt-0">
+            <button onclick="switchTab('learn')" class="bg-slate-900 hover:bg-slate-800 text-white px-3 py-1 rounded-lg transition text-xs flex items-center gap-1.5 font-bold shadow-sm">
+                <i class="fa-solid fa-book-open text-amber-300"></i> 種明かし・解説を見る
+            </button>
+        </div>
+    </div>
+
+    <!-- App Logic Script -->
+    <script>
+        let countdownInterval = null;
+        let audioCtx = null;
+
+        // Web Audio API Warning Sound Beep
+        function playWarningBeep() {
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(880, audioCtx.currentTime); // Pitch A5
+                osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.35); // Rapid Pitch Drop
+
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.35);
+            } catch(e) {
+                // Audio constrained by browser policy until interaction
+            }
+        }
+
+        // Switch Mode Tabs (Sim / Learn)
+        function switchTab(tab) {
+            const simSection = document.getElementById('mode-sim');
+            const learnSection = document.getElementById('mode-learn');
+            const btnSim = document.getElementById('tab-btn-sim');
+            const btnLearn = document.getElementById('tab-btn-learn');
+
+            if (tab === 'sim') {
+                simSection.classList.remove('hidden');
+                learnSection.classList.add('hidden');
+
+                btnSim.className = "px-3.5 py-1.5 rounded-lg text-xs md:text-sm font-bold transition-all duration-150 flex items-center gap-2 bg-white dark:bg-slate-800 text-edu-700 dark:text-sky-400 shadow-sm";
+                btnLearn.className = "px-3.5 py-1.5 rounded-lg text-xs md:text-sm font-bold transition-all duration-150 flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white";
+            } else {
+                simSection.classList.add('hidden');
+                learnSection.classList.remove('hidden');
+
+                btnLearn.className = "px-3.5 py-1.5 rounded-lg text-xs md:text-sm font-bold transition-all duration-150 flex items-center gap-2 bg-white dark:bg-slate-800 text-edu-700 dark:text-sky-400 shadow-sm";
+                btnSim.className = "px-3.5 py-1.5 rounded-lg text-xs md:text-sm font-bold transition-all duration-150 flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white";
+                
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // Trigger Scam View on first interaction
+        function triggerScamOnInteraction() {
+            playWarningBeep();
+
+            const scamContainer = document.getElementById('sim-scam');
+            document.getElementById('sim-portal').classList.add('hidden');
+            scamContainer.classList.remove('hidden');
+            scamContainer.classList.add('shake-effect');
+            document.getElementById('reset-bar').classList.remove('hidden');
+
+            setTimeout(() => {
+                scamContainer.classList.remove('shake-effect');
+            }, 600);
+
+            populateDeviceData();
+            startTimer(180); // 3 minutes countdown timer
+
+            scamContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Reset Simulation View
+        function resetSimView() {
+            document.getElementById('sim-portal').classList.remove('hidden');
+            document.getElementById('sim-scam').classList.add('hidden');
+            document.getElementById('reset-bar').classList.add('hidden');
+
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+        }
+
+        // Intercept Cancellation Form Submission
+        function interceptCancellation(e) {
+            e.preventDefault();
+            document.getElementById('trap-modal').classList.remove('hidden');
+        }
+
+        function closeTrapModal() {
+            document.getElementById('trap-modal').classList.add('hidden');
+        }
+
+        // Extract Real Browser Parameters for Threat Simulation
+        function populateDeviceData() {
+            const randomID = 'EDU-' + Math.floor(1000000 + Math.random() * 9000000);
+            document.getElementById('scam-user-id').innerText = randomID;
+
+            // User Agent
+            document.getElementById('info-ua').innerText = navigator.userAgent;
+
+            // Screen Resolution & Color Depth
+            const screenInfo = `${window.screen.width} x ${window.screen.height} (${window.screen.colorDepth}-bit カラー深度)`;
+            document.getElementById('info-screen').innerText = screenInfo;
+
+            // Language & Timezone
+            const lang = navigator.language || 'ja';
+            const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Tokyo';
+            document.getElementById('info-lang').innerText = `${lang} / ${tz}`;
+
+            // Current Time
+            const now = new Date();
+            const timeStr = now.getFullYear() + '/' + 
+                String(now.getMonth() + 1).padStart(2, '0') + '/' + 
+                String(now.getDate()).padStart(2, '0') + ' ' + 
+                String(now.getHours()).padStart(2, '0') + ':' + 
+                String(now.getMinutes()).padStart(2, '0') + ':' + 
+                String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('info-time').innerText = timeStr;
+
+            // Deadline
+            document.getElementById('scam-deadline').innerText = `本日 23:59まで`;
+        }
+
+        // Countdown Timer Logic
+        function startTimer(durationSeconds) {
+            if (countdownInterval) clearInterval(countdownInterval);
+            let timer = durationSeconds;
+            const timerDisplay = document.getElementById('scam-timer');
+
+            countdownInterval = setInterval(() => {
+                const minutes = Math.floor(timer / 60);
+                const seconds = timer % 60;
+
+                const mStr = String(minutes).padStart(2, '0');
+                const sStr = String(seconds).padStart(2, '0');
+
+                timerDisplay.innerText = `${mStr}:${sStr}`;
+
+                if (--timer < 0) {
+                    clearInterval(countdownInterval);
+                    timerDisplay.innerText = "00:00";
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
